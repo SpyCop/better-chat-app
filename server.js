@@ -76,7 +76,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('message', function(message) {
-		console.log('Message received:' + message.name + '@' + moment.utc(message.timestamp).local().format('d/m/YYYY HH:mm') + ': ' + message.text);
+		console.log('Message received: ' + message.name + ' @ ' + moment.utc(message.timestamp).local().format('D/M/YYYY HH:mm') + ': ' + message.text);
 		var receiverName;
 
 		if (message.text === '@currentUsers') {
