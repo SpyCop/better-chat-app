@@ -32,7 +32,7 @@ function sendCurrentUsers(socket) {
 	console.log(io.sockets.connected);
 
 	socket.emit('message', {
-		name: "System",
+		user: "System",
 		text: "Current users: " + users.join(', '),
 		timestamp: moment().valueOf()
 	});
@@ -58,7 +58,7 @@ io.on('connection', function(socket) {
 		if (typeof userData !== 'undefined') {
 			socket.leave(userData.room);
 			io.to(userData.room).emit('message', {
-				name: "System",
+				user: "System",
 				text: userData.name + ' has left',
 				timestamp: moment().valueOf()
 			});
@@ -70,14 +70,14 @@ io.on('connection', function(socket) {
 		clientInfo[socket.id] = req;
 		socket.join(req.room);
 		socket.broadcast.to(req.room).emit('message', {
-			name: "System",
+			user: "System",
 			text: req.name + ' has joined',
 			timestamp: moment().valueOf()
 		});
 	});
 
 	socket.on('message', function(message) {
-		console.log('Message received: ' + message.name + ' @ ' + moment.utc(message.timestamp).local().format('D/M/YYYY HH:mm') + ': ' + message.text);
+		console.log('Message received: ' + message.user + ' in ' + message.room + ' @ ' + moment.utc(message.timestamp).local().format('D/M/YYYY HH:mm') + ': ' + message.text);
 		var receiverName;
 
 		if (message.text === '@currentUsers') {
@@ -91,7 +91,7 @@ io.on('connection', function(socket) {
 	socket.emit('message', {
 		text: "Welcome to the chat app!",
 		timestamp: moment().valueOf(),
-		name: "The System"
+		user: "The System"
 	});
 });
 
