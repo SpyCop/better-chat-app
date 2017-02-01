@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var moment = require('moment');
+var db = require('./db.js');
 var data = {};
 
 app.use(express.static(__dirname + '/public'));
@@ -94,6 +95,9 @@ io.on('connection', function(socket) {
 	});
 });
 
-http.listen(PORT, function() {
+db.sequelize.sync().then(function () {
+	http.listen(PORT, function() {
 	console.log('Server started');
+	});
 });
+
