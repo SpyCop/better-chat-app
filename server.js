@@ -80,6 +80,8 @@ io.on('connection', function(socket) {
 		console.log('Message received: ' + message.name + ' @ ' + moment.utc(message.timestamp).local().format('D/M/YYYY HH:mm') + ': ' + message.text);
 		var receiverName;
 
+		console.log(message);
+
 		if (message.text === '@currentUsers') {
 			sendCurrentUsers(socket);
 		} else {
