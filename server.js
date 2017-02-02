@@ -74,20 +74,21 @@ io.on('connection', function(socket) {
 			text: req.name + ' has joined',
 			timestamp: moment().valueOf()
 		});
+
+		// find last 30 messages from this room and load them in?  (what about unread messages)
 	});
 
 	socket.on('message', function(message) {
 		console.log('Message received: ' + message.user + ' in ' + message.room + ' @ ' + moment.utc(message.timestamp).local().format('D/M/YYYY HH:mm') + ': ' + message.text);
 		var receiverName;
 
-		console.log(message);
-
 		if (message.text === '@currentUsers') {
 			sendCurrentUsers(socket);
 		} else {
 			message.timestamp = moment().valueOf();
 			io.to(clientInfo[socket.id].room).emit('message', message);
-		}
+		};
+		db.message.create(message);
 	});
 
 	socket.emit('message', {

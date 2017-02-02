@@ -1,6 +1,6 @@
 module.exports = function (sequelize, DataTypes) {
 	return sequelize.define('message', {
-		content: {
+		text: {
 			type: DataTypes.STRING,
 			allowNull: false,
 			validate: {
@@ -20,6 +20,11 @@ module.exports = function (sequelize, DataTypes) {
 			validate: {
 				len: [1, 250]
 			}
+		},
+		timestamp: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			validate: {}
 		}
 	});
 };

@@ -6,6 +6,7 @@ var sequelize = new Sequelize(undefined, undefined, undefined, {
 var db = {};
 
 db.message = sequelize.import(__dirname + '/models/message.js');
+db.user = sequelize.import(__dirname + '/models/user.js');
 db.sequelize=sequelize;
 db.Sequelize=Sequelize;
 
