@@ -29,7 +29,7 @@ socket.on('message', function(message) {
 	console.log('New message:');
 	console.log(moment.utc(message.timestamp).local().format('d/m/YY HH:mm') + ' - ' + message.text);
 
-	$message.append('<p> <strong>' + message.name + '@' + momentTimestamp.local().format('h:mm a') + '</strong></p>');
+	$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
 	$message.append('<p>' + message.text + '</p>');
 	$messages.append($message);
 });
@@ -44,7 +44,8 @@ $form.on('submit', function(event) {
 
 	socket.emit('message', {
 		text: $message.val(),
-		name: name
+		user: name,
+		room: room
 	});
 
 	$message.val('');
