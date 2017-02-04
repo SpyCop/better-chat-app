@@ -27,7 +27,7 @@ socket.on('message', function(message) {
 	var $message = jQuery('<li class="list-group-item"></li>');
 
 	console.log('New message:');
-	console.log(moment.utc(message.timestamp).local().format('d/m/YY HH:mm') + ' - ' + message.text);
+	console.log(moment.utc(message.timestamp).local().format('DD MMM YYYY HH:mm') + ' - ' + message.text + message.timestamp + ' -- ' + momentTimestamp);
 
 	$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
 	$message.append('<p>' + message.text + '</p>');
@@ -45,7 +45,8 @@ $form.on('submit', function(event) {
 	socket.emit('message', {
 		text: $message.val(),
 		user: name,
-		room: room
+		room: room,
+		timestamp: moment().valueOf()
 	});
 
 	$message.val('');
