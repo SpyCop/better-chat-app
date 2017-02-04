@@ -59,8 +59,7 @@ io.on('connection', function(socket) {
 			socket.leave(userData.room);
 			io.to(userData.room).emit('message', {
 				user: "System",
-				text: userData.name + ' has left',
-				timestamp: moment().valueOf()
+				text: userData.name + ' has left'
 			});
 			delete clientInfo[socket.id];
 		}
@@ -71,8 +70,7 @@ io.on('connection', function(socket) {
 		socket.join(req.room);
 		socket.broadcast.to(req.room).emit('message', {
 			user: "System",
-			text: req.name + ' has joined',
-			timestamp: moment().valueOf()
+			text: req.name + ' has joined'
 		});
 		
 		db.message.count({
