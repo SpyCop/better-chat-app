@@ -57,13 +57,10 @@ io.on('connection', function(socket) {
 
 		if (typeof userData !== 'undefined') {
 			socket.leave(userData.room);
-			db.message.create(message = {
+			io.to(userData.room).emit('message', {
 				user: "System",
 				text: userData.name + ' has left',
-				room: userData.room,
 				timestamp: moment().valueOf()
-			}).then (function (message) {
-				io.to(userData.room).emit(message);
 			});
 			delete clientInfo[socket.id];
 		}
@@ -72,15 +69,12 @@ io.on('connection', function(socket) {
 	socket.on('joinRoom', function(req) {
 		clientInfo[socket.id] = req;
 		socket.join(req.room);
-		db.message.create(message = {
+		socket.broadcast.to(req.room).emit('message', {
 			user: "System",
 			text: req.name + ' has joined',
-			room: req.room,
 			timestamp: moment().valueOf()
-		}).then (function (message) {
-			socket.broadcast.to(req.room).emit(message);
 		});
-
+		
 		db.message.count({
 			where: {
 				room: req.room
@@ -90,8 +84,8 @@ io.on('connection', function(socket) {
 			db.message.findAll({
 				where: {
 					room: req.room
-				}, 
-				offset: count-30, 
+				},
+				offset: count-30,
 				limit: 30,
 				order: 'timestamp ASC'
 			}).then(function (messages) {
