@@ -36,7 +36,31 @@ function sendCurrentUsers(socket) {
 		text: "Current users: " + users.join(', '),
 		timestamp: moment().valueOf()
 	});
-}
+};
+
+function loadMessages(socket, amount) {
+	var userInfo = clientInfo[socket.id];
+
+	if (typeof userInfo != 'undefined') {
+		db.message.count({
+			where: {
+				room: userInfo.room
+			}
+		}).then(function (count) {
+			if (count < amount) count = amount;
+			db.message.findAll({
+				where: {
+					room: userInfo.room
+				},
+				//offset: count-amount,
+				limit: amount,
+				order: 'timestamp DESC'
+			}).then(function (messages) {
+				socket.emit('message', messages);
+			});
+		});
+	};
+};
 
 /*
 function checkWords(words) {
@@ -73,29 +97,9 @@ io.on('connection', function(socket) {
 			text: req.name + ' has joined'
 		});
 		
-		db.message.count({
-			where: {
-				room: req.room
-			}
-		}).then(function (count) {
-			if (count < 30) count = 30;
-			db.message.findAll({
-				where: {
-					room: req.room
-				},
-				offset: count-30,
-				limit: 30,
-				order: 'timestamp ASC'
-			}).then(function (messages) {
-				for (var i = 0; i < messages.length; i++) {
-					socket.emit('message', messages[i]);
-				}
-			});
-		});
-		// find last 30 messages from this room and load them in?  (what about unread messages)
-		//okay, did 30 messages, see if this is elegant, i like it ;) for unread idk, also load more at the top is required
-		//should we adjust styling? 30 is a long way scrolling and maybe put own messages on the right (#cloneWhatsapp?)
-		//i've now made it that also messages about people joining and leaving get saved in db, do we want that?
+		loadMessages(socket, 30);
+		//load in 30 msgs, what about unread messages?
+		//should we adjust styling? 30 is a long way scrolling, autofocus on last and maybe put own messages on the right (#cloneWhatsapp?)
 	});
 
 	socket.on('message', function(message) {
@@ -110,9 +114,8 @@ io.on('connection', function(socket) {
 		};
 	});
 
-	socket.emit('message', {
-		text: "Welcome to the chat app!",
-		user: "The System"
+	socket.on('load-messages', function (inf) {
+		loadMessages(socket, inf.amount);
 	});
 });
 

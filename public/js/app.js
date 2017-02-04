@@ -1,6 +1,7 @@
 var socket = io();
 var name = getName(socket) || "Anonymous";
 var room = getQueryVariable('room');
+var messages_amount = 30;
 
 function getName(socket) {
 	var name = getQueryVariable('name');
@@ -22,16 +23,31 @@ socket.on('connect', function() {
 });
 
 socket.on('message', function(message) {
-	var momentTimestamp = moment.utc(message.timestamp);
 	var $messages = jQuery('.messages');
-	var $message = jQuery('<li class="list-group-item"></li>');
 
-	console.log('New message:');
-	console.log(moment.utc(message.timestamp).local().format('DD MMM YYYY HH:mm') + ' - ' + message.text + message.timestamp + ' -- ' + momentTimestamp);
+	if (Array.isArray(message) == true) {
+		var $message;
+		for (var j = 0; j < message.length; j++) {
+			var momentTimestamp = moment.utc(message[j].timestamp);
 
-	$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
-	$message.append('<p>' + message.text + '</p>');
-	$messages.append($message);
+			$message = jQuery('<li class="list-group-item"></li>');
+			$message.append('<p> <strong>' + message[j].user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
+			$message.append('<p>' + message[j].text + '</p>');
+
+			$messages.prepend($message);
+		}
+	} else {
+		var momentTimestamp = moment.utc(message.timestamp);
+		var $message = jQuery('<li class="list-group-item"></li>');
+
+		console.log('New message:');
+		console.log(moment.utc(message.timestamp).local().format('DD MMM YYYY HH:mm') + ' - ' + message.text + message.timestamp + ' -- ' + momentTimestamp);
+
+		$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
+		$message.append('<p>' + message.text + '</p>');
+
+		$messages.append($message);	
+	}
 });
 
 //read submitted form
@@ -50,4 +66,16 @@ $form.on('submit', function(event) {
 	});
 
 	$message.val('');
+});
+
+//load more messages
+var $loading = jQuery('#load-messages');
+
+$loading.on('submit', function(event) {
+	event.preventDefault();
+
+	messages_amount += 30;
+	socket.emit('load-messages', {
+		amount: messages_amount
+	});
 });
