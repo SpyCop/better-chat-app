@@ -1,16 +1,26 @@
 var socket = io();
-var name = getName(socket) || "Anonymous";
+var name = getName() || "Anonymous";
 var room = getQueryVariable('room');
 var messages_amount = 30;
 
-function getName(socket) {
+function getName() {
 	var name = getQueryVariable('name');
 	if (typeof name === 'undefined') {
 		return "Anonymous";
 	}
-	//users.[name] = socket;
 	return name;
-}
+};
+
+function createMessage(user, message) {
+	var momentTimestamp = moment.utc(message.timestamp);
+
+	if (user == message.user) var $message = jQuery('<li class="list-group-item" style="text-align: right"></li>');
+	else var $message = jQuery('<li class="list-group-item"></li>');
+	$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
+	$message.append('<p style="margin: 0 0 0 5px">' + message.text + '</p>');
+
+	return $message;
+};
 
 jQuery('.room-title').text(room);
 
@@ -26,28 +36,17 @@ socket.on('message', function(message) {
 	var $messages = jQuery('.messages');
 
 	if (Array.isArray(message) == true) {
-		var $message;
+		$(".messages").html(''); //I remove the html of .messages because I load all last 60 messages instead of an extra 30, needs fixin'
+
 		for (var j = 0; j < message.length; j++) {
-			var momentTimestamp = moment.utc(message[j].timestamp);
-
-			$message = jQuery('<li class="list-group-item"></li>');
-			$message.append('<p> <strong>' + message[j].user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
-			$message.append('<p>' + message[j].text + '</p>');
-
-			$messages.prepend($message);
+			$messages.prepend(createMessage(getName(), message[j]));
 		}
 	} else {
-		var momentTimestamp = moment.utc(message.timestamp);
-		var $message = jQuery('<li class="list-group-item"></li>');
-
 		console.log('New message:');
-		console.log(moment.utc(message.timestamp).local().format('DD MMM YYYY HH:mm') + ' - ' + message.text + message.timestamp + ' -- ' + momentTimestamp);
+		console.log(moment.utc(message.timestamp).local().format('DD MMM YYYY HH:mm') + ' - ' + message.text);
 
-		$message.append('<p> <strong>' + message.user + ' @ ' + momentTimestamp.local().format('DD MMM HH:mm') + '</strong></p>');
-		$message.append('<p>' + message.text + '</p>');
-
-		$messages.append($message);	
-	}
+		$messages.append(createMessage(getName(), message));
+	};
 });
 
 //read submitted form

@@ -14,11 +14,19 @@ h1 {
 }
 
 .messages p {
-	margin: 6px 0;
+	margin: 2px 0;
 }
 
 .btn-custom {
 	color: #000;
     background-color: #b1cabc;
     border-color: #8DA196;
+}
+
+.btn-custom:hover {
+	background-color: #9fb5a9;
+}
+
+.list-group-item {
+	 padding: 4px 15px;
 }

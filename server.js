@@ -86,7 +86,7 @@ io.on('connection', function(socket) {
 				text: userData.name + ' has left'
 			});
 			delete clientInfo[socket.id];
-		}
+		};
 	});
 
 	socket.on('joinRoom', function(req) {
@@ -99,7 +99,7 @@ io.on('connection', function(socket) {
 		
 		loadMessages(socket, 30);
 		//load in 30 msgs, what about unread messages?
-		//should we adjust styling? 30 is a long way scrolling, autofocus on last and maybe put own messages on the right (#cloneWhatsapp?)
+		//autofocus on last
 	});
 
 	socket.on('message', function(message) {
