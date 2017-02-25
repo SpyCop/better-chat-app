@@ -30,3 +30,7 @@ h1 {
 .list-group-item {
 	 padding: 4px 15px;
 }
+
+#error {
+	color: #a94442;
+}

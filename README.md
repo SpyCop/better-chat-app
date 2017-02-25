@@ -1,2 +1,2 @@
 # better-chat-app
-Improving upon chat app JavaScript HTML
+Improving upon chat app using JavaScript and HTML

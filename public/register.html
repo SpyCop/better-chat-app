@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Chat account registration</title>
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/styles.css">
+	</head>
+	<body>
+		<div class="vertical-center">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4 well">
+						<h1 class="text-center">Register</h1>
+						<p id="error"></p>
+						<form id="register-form" data-toggle="validator"> <!-- action="/success_register.html" method="post" -->
+						
+						<div id="email-input" class="form-group">
+							<label>Email</label>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-inbox"></i>
+								</span>
+								<input type="email" placeholder="email@example.com" id="email" name="email" class="form-control" data-error="Please enter a valid email address" required/>
+							</div>
+							<div class="help-block with-errors"></div>
+						</div>
+
+						<div class="form-group">
+							<label>Display Name</label>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-user"></i>
+								</span>
+								<input type="text" placeholder="" id="name" name="name" class="form-control" data-error="Field cannot be empty" required/>
+							</div>
+							<div class="help-block with-errors"></div>
+						</div>
+
+						<div class="form-group">
+							<label>Password</label>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-lock"></i>
+								</span>
+								<input type="password" placeholder="Password" id="password" name="password" class="form-control" data-minlength="6" required>
+							</div>
+							<div class="help-block">Minimum of 6 characters</div>
+						</div>
+
+						<div class="form-group">
+							<label>Retype password</label>
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="glyphicon glyphicon-lock"></i>
+								</span>
+								<input type="password" placeholder="Retype the same password here" id="confirm_password" class="form-control" data-match="#password" data-match-error="The entered passwords are not the same" required>
+							</div>
+							<div class="help-block with-errors"></div>
+						</div>
+						<input type="submit" id="submit-button" value="Register" class="btn btn-custom btn-block"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="/js/jquery-2.2.4.min.js"></script>
+		<script src="/js/validator.js"></script>
+		<script src="/js/socket.io-1.3.7.js"></script>
+		<script src="/js/register.js"></script>
+	</body>
+</html>

@@ -1,15 +1,21 @@
-var PORT = process.env.PORT || 3000;
 var express = require('express');
+var bodyParser = require('body-parser');
+var moment = require('moment');
+var _ = require('underscore');
+var db = require('./db.js');
+
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var moment = require('moment');
-var db = require('./db.js');
-var data = {};
+var PORT = process.env.PORT || 3000;
+var data = {}; //what is this for? or is this just me leaving code around?
+var clientInfo = {};
 
 app.use(express.static(__dirname + '/public'));
-
-var clientInfo = {};
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 //@currentUsers send all room's users to socket
 function sendCurrentUsers(socket) {
@@ -62,17 +68,19 @@ function loadMessages(socket, amount) {
 	};
 };
 
-/*
-function checkWords(words) {
-	words.forEach(function(word) {
-		if (word === '@private') {
-			return true;
-		}
-	});
-	return false;
-}
-*/
+// //POST registration
+// app.post('/success_register.html', function(req, res) {
+// 	var body = _.pick(req.body, 'email', 'name', 'password');
+// 	console.log(body);
 
+// 	db.user.create(body).then(function(user) {
+// 		res.json(user.toPublicJSON());
+// 	}, function(e) {
+// 		res.status(400).json(e);
+// 	});
+// })
+
+//socket stuff
 io.on('connection', function(socket) {
 	console.log('User connected via Socket.io');
 
@@ -117,11 +125,21 @@ io.on('connection', function(socket) {
 	socket.on('load-messages', function (inf) {
 		loadMessages(socket, inf.amount);
 	});
+
+	socket.on('register', function (details) {
+
+		db.user.create(details)
+		.then( function(user) {
+			socket.emit('register-success', {});
+		}, function(error) {
+			socket.emit('register-failure', error);
+		});
+	});
 });
 
-db.sequelize.sync().then(function () {
+db.sequelize.sync({force: true}).then(function () {
 	http.listen(PORT, function() {
-	console.log('Server started');
+		console.log('Server started');
 	});
 });
 
